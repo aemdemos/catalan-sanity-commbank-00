@@ -684,6 +684,20 @@ async function loadSections(element) {
   }
 }
 
+function getPictureLink(parent) {
+  let link = null;
+
+  if (parent.childElementCount === 1) {
+    if (parent.tagName === 'DIV') {
+      return null;
+    }
+    link = parent.nextElementSibling?.querySelector('a[href]');
+  } else if (parent.childElementCount === 2) {
+    link = parent.querySelector('a[href]');
+  }
+  return link;
+}
+
 /**
  * Wraps images followed by links within a matching <a> tag.
  * @param {Element} container The container element
