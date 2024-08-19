@@ -684,55 +684,18 @@ async function loadSections(element) {
   }
 }
 
-function getPictureLink(parent) {
-  let link = null;
-
-  if (parent.childElementCount === 1) {
-    if (parent.tagName === 'DIV') {
-      return null;
-    }
-    link = parent.nextElementSibling?.querySelector('a[href]');
-  } else if (parent.childElementCount === 2) {
-    link = parent.querySelector('a[href]');
-  }
-  return link;
-}
-
 /**
- * Wraps images followed by links within a matching <a> tag.
- * @param {Element} container The container element
+ * Decorates linked pictures in a given block.
+ * @param {HTMLElement} block - The block element containing the pictures.
  */
-function decorateLinkedPictures(container) {
-  [...container.querySelectorAll('picture')]
-    .filter((picture) => {
-      const parent = picture.parentElement;
-
-      const link = getPictureLink(parent);
-
-      try {
-        return link
-            && new URL(link.href).pathname === new URL(link.textContent).pathname;
-      } catch (err) {
-        return false;
-      }
-    })
-    .forEach((picture) => {
-      const parent = picture.parentElement;
-      const link = getPictureLink(parent);
-      link.className = '';
-      link.innerHTML = '';
-
-      if (link.parentElement.tagName !== 'STRONG') {
-        link.target = '_blank';
-      }
-
-      link.append(picture);
-      link.parentElement.classList.toggle('button-container', false);
-      // delete parent element if empty
-      if (parent.childElementCount === 0) {
-        parent.remove();
-      }
-    });
+function decorateLinkedPictures(block) {
+  block.querySelectorAll('picture + br + a').forEach((a) => {
+    // remove br
+    a.previousElementSibling.remove();
+    const picture = a.previousElementSibling;
+    a.textContent = '';
+    a.append(picture);
+  });
 }
 
 init();
